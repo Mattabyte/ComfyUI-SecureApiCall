@@ -11,7 +11,8 @@ Send a JSON message to the specified URL. Supports basic api key authentication.
 
 ## A Note on Security
 
-99.99% of the time, you should use the prefix '$ENV.<Some_Variable_Name>' to access the environment variables. This keeps your secrets out of the metadata of the output.
+99.99% of the time, you should use the prefix '$ENV.<Some_Variable_Name>' to access the environment variables for the api_url and api_auth fields.
+This keeps your secrets out of the metadata of the output.
 
 **IF YOU DO NOT ADD THE --disable-metadata FLAG TO COMFYUI, THIS _WILL_ SPILL SECRETS IN THE METADATA OF THE OUTPUT.**
 **You must ensure that the metadata is not attached to _any_ outputs, as some nodes will not respect the --disable-metadata flag and will attach their own metadata.**
