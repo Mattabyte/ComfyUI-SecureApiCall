@@ -68,13 +68,13 @@ class SecureApiCall:
             if not env_name.replace("_", "").isalnum():
                 raise ValueError("Environment variable names must only contain letters, numbers, and underscores")
             env_var = f"COMFYUI_SECUREAPICALL_{env_name}"
-            api_url = os.getenv(env_var) or 'NOT_SET'
+            api_url = os.getenv(env_var) or raise ValueError(f"Environment Variable {env_var} is not set")
         if api_auth.startswith("$ENV."):
             env_name = api_auth.removeprefix("$ENV.")
             if not env_name.replace("_", "").isalnum():
                 raise ValueError("Environment variable names must only contain letters, numbers, and underscores")
             env_var = f"COMFYUI_SECUREAPICALL_{env_name}"
-            api_auth = os.getenv(env_var) or 'NOT_SET'
+            api_auth = os.getenv(env_var) or raise ValueError(f"Environment Variable {env_var} is not set")
 
         # Send the payload to the API
         res = requests.post(
