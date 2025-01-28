@@ -1,6 +1,7 @@
 import requests
 import json
 import server
+import os
 
 from .util import ComfyAnyType
 
@@ -37,11 +38,13 @@ class SecureApiCall:
             payload.update({"comfyui_info": {"full_comfyui_info": current_queue}})
 
 
-        # Resolve any environment variables in the api_url, api_auth fields -- If the variable is not set, change the value to 'NOT_SET'
+        # Resolve any environment variables in the api_url, api_auth fields -- Only allow COMFYUI_SECUREAPICALL_ prefixed variables
         if api_url.startswith("$ENV."):
-            api_url = os.getenv(api_url.removeprefix("$ENV.")) or 'NOT_SET'
+            env_var = f"COMFYUI_SECUREAPICALL_{api_url.removeprefix('$ENV.')}"
+            api_url = os.getenv(env_var) or 'NOT_SET'
         if api_auth.startswith("$ENV."):
-            api_auth = os.getenv(api_auth.removeprefix("$ENV.")) or 'NOT_SET'
+            env_var = f"COMFYUI_SECUREAPICALL_{api_auth.removeprefix('$ENV.')}"
+            api_auth = os.getenv(env_var) or 'NOT_SET'
 
         # Send the payload to the API
         res = requests.post(

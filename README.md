@@ -22,7 +22,13 @@ $ENV.<Some_Variable_Name>
 to access the environment variables for the api_url and api_auth fields.
 This keeps your secrets out of the metadata of the output.
 
-**IF YOU DO NOT USE ENVIRONMENT VARIABLES, THIS _WILL_ SPILL SECRETS IN THE METADATA.**
+This will only work if the environment variable is prefixed with `COMFYUI_SECUREAPICALL_`.
+
+So setting $ENV.API_KEY will use the environment variable `COMFYUI_SECUREAPICALL_API_KEY`.
+
+
+##**WARNING**
+**IF YOU DON'T USE ENVIRONMENT VARIABLES IN THIS NODE, THIS _WILL_ SPILL SECRETS IN THE METADATA.**
 
 You must ensure that the metadata is not attached to _any_ outputs, as some nodes will not respect
 the --disable-metadata flag and will attach their own metadata.
