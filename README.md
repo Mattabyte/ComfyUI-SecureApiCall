@@ -22,9 +22,9 @@ $ENV.<Some_Variable_Name>
 to access the environment variables for the api_url and api_auth fields.
 This keeps your secrets out of the metadata of the output.
 
-This will only work if the environment variable is prefixed with `COMFYUI_SECUREAPICALL_`.
+This will only work if the environment variable is prefixed with `CSAPI_`.
 
-So setting $ENV.API_KEY will use the environment variable `COMFYUI_SECUREAPICALL_API_KEY`.
+So setting `$ENV.API_KEY` will use the environment variable `CSAPI_API_KEY`.
 
 
 ##**WARNING**

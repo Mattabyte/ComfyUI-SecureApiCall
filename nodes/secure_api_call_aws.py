@@ -31,11 +31,11 @@ class SecureApiCallAws:
                 "full_comfyui_info": ('BOOLEAN', {'default': True}),
                 "timeout": ('FLOAT', {'default': 3, 'min': 0, 'max': 60}),
                 "verify_ssl": ('BOOLEAN', {'default': True}),
-                "api_url": ("STRING", {'default': 'https://localhost:9001/', 'tooltip': 'The API Url (USE $ENV.API_URL) and set COMFYUI_SECUREAPICALL_API_URL to the URL'}),
+                "api_url": ("STRING", {'default': 'https://localhost:9001/', 'tooltip': 'The API Url (USE $ENV.API_URL) and set CSAPI_API_URL to the URL'}),
                 "data": ('STRING', {'default': '{"data": "some_data"}'}),
-                "aws_access_key_id": ("STRING", {'default': '', 'tooltip': 'The AWS Access Key ID (USE $ENV.AWS_ACCESS_KEY_ID) and set COMFYUI_SECUREAPICALL_AWS_ACCESS_KEY_ID to the ID'}),
-                "aws_secret_access_key": ("STRING", {'default': '', 'tooltip': 'The AWS Secret Access Key (USE $ENV.AWS_SECRET_ACCESS_KEY) and set COMFYUI_SECUREAPICALL_AWS_SECRET_ACCESS_KEY to the Key'}),
-                "region_name": ("STRING", {'default': '', 'tooltip': 'The AWS Region Name (USE $ENV.AWS_REGION_NAME) and set COMFYUI_SECUREAPICALL_AWS_REGION_NAME to the Region'}),
+                "aws_access_key_id": ("STRING", {'default': '', 'tooltip': 'The AWS Access Key ID (USE $ENV.AWS_ACCESS_KEY_ID) and set CSAPI_AWS_ACCESS_KEY_ID to the ID'}),
+                "aws_secret_access_key": ("STRING", {'default': '', 'tooltip': 'The AWS Secret Access Key (USE $ENV.AWS_SECRET_ACCESS_KEY) and set CSAPI_AWS_SECRET_ACCESS_KEY to the Key'}),
+                "region_name": ("STRING", {'default': '', 'tooltip': 'The AWS Region Name (USE $ENV.AWS_REGION_NAME) and set CSAPI_AWS_REGION_NAME to the Region'}),
             }
         }
 
@@ -53,7 +53,7 @@ class SecureApiCallAws:
         if not env_name.replace("_", "").isalnum():
             raise ValueError("Environment variable names must only contain letters, numbers, and underscores")
             
-        env_var = f"COMFYUI_SECUREAPICALL_{env_name}"
+        env_var = f"CSAPI_{env_name}"
         resolved_value = os.getenv(env_var)
         if not resolved_value:
             raise ValueError(f"Environment Variable {env_var} is not set")

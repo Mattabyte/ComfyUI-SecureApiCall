@@ -25,10 +25,10 @@ class SecureApiCall:
         return {
             "required": {
                 "any": (ComfyAnyType("*"), {}),
-                "api_url": ("STRING", {'default': 'https://localhost:9001/', 'tooltip': 'The API Url (USE $ENV.API_URL) and set COMFYUI_SECUREAPICALL_API_URL to the URL'}),
+                "api_url": ("STRING", {'default': 'https://localhost:9001/', 'tooltip': 'The API Url (USE $ENV.API_URL) and set CSAPI_API_URL to the URL'}),
                 "data": ('STRING', {'default': '{"data": "some_data"}'}),
                 "full_comfyui_info": ("BOOLEAN", {"default": True}),
-                "api_auth": ("STRING", {'default': 'x-api-key', 'tooltip': 'The API key to use for authentication (USE $ENV.API_KEY) and set COMFYUI_SECUREAPICALL_API_KEY to the URL'}),
+                "api_auth": ("STRING", {'default': 'x-api-key', 'tooltip': 'The API key to use for authentication (USE $ENV.API_KEY) and set CSAPI_API_KEY to the URL'}),
                 "timeout": ('FLOAT', {'default': 3, 'min': 0, 'max': 60}),
                 "verify_ssl": ("BOOLEAN", {"default": True}),
             },
@@ -48,7 +48,7 @@ class SecureApiCall:
         if not env_name.replace("_", "").isalnum():
             raise ValueError("Environment variable names must only contain letters, numbers, and underscores")
             
-        env_var = f"COMFYUI_SECUREAPICALL_{env_name}"
+        env_var = f"CSAPI_{env_name}"
         resolved_value = os.getenv(env_var)
         if not resolved_value:
             raise ValueError(f"Environment Variable {env_var} is not set")
