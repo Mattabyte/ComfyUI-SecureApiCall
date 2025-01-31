@@ -85,6 +85,7 @@ class SecureApiCallAws:
         api_url = self.resolve_env_var(api_url, "api_url")
         aws_access_key_id = self.resolve_env_var(aws_access_key_id, "aws_access_key_id")
         aws_secret_access_key = self.resolve_env_var(aws_secret_access_key, "aws_secret_access_key")
+        region_name = self.resolve_env_var(region_name, "aws_region_name")
 
         # Configure AWS credentials
         session = Session(
@@ -106,12 +107,12 @@ class SecureApiCallAws:
 
         # Sign the request with SigV4
         SigV4Auth(credentials, 'execute-api', session.region_name).add_auth(request)
-
         # Send the signed request
         res = requests.post(
             api_url,
             data=request.data,
-            headers=dict(request.headers)
+            headers=dict(request.headers),
+            verify=verify_ssl
         )
 
         res.raise_for_status()
