@@ -17,8 +17,8 @@ class SecureApiCallAws:
     def validate_url(url: str) -> Optional[str]:
         try:
             parsed = urllib.parse.urlparse(url)
-            if parsed.scheme not in SecureApiCall.ALLOWED_SCHEMES:
-                return f"URL scheme must be one of: {', '.join(SecureApiCall.ALLOWED_SCHEMES)}"
+            if parsed.scheme not in SecureApiCallAws.ALLOWED_SCHEMES:
+                return f"URL scheme must be one of: {', '.join(SecureApiCallAws.ALLOWED_SCHEMES)}"
             return None
         except Exception:
             return "Invalid URL format"
