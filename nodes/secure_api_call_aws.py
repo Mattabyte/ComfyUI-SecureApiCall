@@ -61,11 +61,6 @@ class SecureApiCallAws:
         return resolved_value
 
     def hook(self, any, api_url, aws_access_key_id, aws_secret_access_key, region_name, data, full_comfyui_info, timeout, verify_ssl):
-        # Validate URL before proceeding
-        url_error = self.validate_url(api_url)
-        if url_error:
-            raise ValueError(f"Invalid API URL: {url_error}")
-
         # Get the payload from the data string
         try:
             payload = json.loads(data)
@@ -87,6 +82,11 @@ class SecureApiCallAws:
         aws_secret_access_key = self.resolve_env_var(aws_secret_access_key, "aws_secret_access_key")
         region_name = self.resolve_env_var(region_name, "aws_region_name")
 
+        # Validate URL before proceeding
+        url_error = self.validate_url(api_url)
+        if url_error:
+            raise ValueError(f"Invalid API URL: {url_error}")
+            
         # Configure AWS credentials
         session = Session(
             aws_access_key_id=aws_access_key_id,

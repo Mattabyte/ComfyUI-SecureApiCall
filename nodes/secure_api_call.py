@@ -56,11 +56,6 @@ class SecureApiCall:
         return resolved_value
 
     def hook(self, any, api_url, api_auth, data, full_comfyui_info, timeout, verify_ssl):
-        # Validate URL before proceeding
-        url_error = self.validate_url(api_url)
-        if url_error:
-            raise ValueError(f"Invalid API URL: {url_error}")
-
         # Get the payload from the data string
         try:
             payload = json.loads(data)
@@ -81,6 +76,11 @@ class SecureApiCall:
         api_url = self.resolve_env_var(api_url, "api_url")
         api_auth = self.resolve_env_var(api_auth, "api_auth")
 
+        # Validate URL before proceeding
+        url_error = self.validate_url(api_url)
+        if url_error:
+            raise ValueError(f"Invalid API URL: {url_error}")
+            
         # Send the payload to the API
         res = requests.post(
             api_url, 
