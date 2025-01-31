@@ -3,11 +3,14 @@ import json
 import server
 import os
 import urllib.parse
+from boto3.session import Session
+from botocore.auth import SigV4Auth
+from botocore.awsrequest import AWSRequest
 from typing import Optional
 
 from .util import ComfyAnyType
 
-class SecureApiCall:
+class SecureApiCallAws:
     ALLOWED_SCHEMES = {'https', 'http'}
     
     @staticmethod
@@ -25,13 +28,15 @@ class SecureApiCall:
         return {
             "required": {
                 "any": (ComfyAnyType("*"), {}),
+                "full_comfyui_info": ('BOOLEAN', {'default': True}),
+                "timeout": ('FLOAT', {'default': 3, 'min': 0, 'max': 60}),
+                "verify_ssl": ('BOOLEAN', {'default': True}),
                 "api_url": ("STRING", {'default': 'https://localhost:9001/', 'tooltip': 'The API Url (USE $ENV.API_URL) and set COMFYUI_SECUREAPICALL_API_URL to the URL'}),
                 "data": ('STRING', {'default': '{"data": "some_data"}'}),
-                "full_comfyui_info": ("BOOLEAN", {"default": True}),
-                "api_auth": ("STRING", {'default': 'x-api-key', 'tooltip': 'The API key to use for authentication (USE $ENV.API_KEY) and set COMFYUI_SECUREAPICALL_API_KEY to the URL'}),
-                "timeout": ('FLOAT', {'default': 3, 'min': 0, 'max': 60}),
-                "verify_ssl": ("BOOLEAN", {"default": True}),
-            },
+                "aws_access_key_id": ("STRING", {'default': '', 'tooltip': 'The AWS Access Key ID (USE $ENV.AWS_ACCESS_KEY_ID) and set COMFYUI_SECUREAPICALL_AWS_ACCESS_KEY_ID to the ID'}),
+                "aws_secret_access_key": ("STRING", {'default': '', 'tooltip': 'The AWS Secret Access Key (USE $ENV.AWS_SECRET_ACCESS_KEY) and set COMFYUI_SECUREAPICALL_AWS_SECRET_ACCESS_KEY to the Key'}),
+                "region_name": ("STRING", {'default': '', 'tooltip': 'The AWS Region Name (USE $ENV.AWS_REGION_NAME) and set COMFYUI_SECUREAPICALL_AWS_REGION_NAME to the Region'}),
+            }
         }
 
     FUNCTION = 'hook'
@@ -55,7 +60,7 @@ class SecureApiCall:
             
         return resolved_value
 
-    def hook(self, any, api_url, api_auth, data, full_comfyui_info, timeout, verify_ssl):
+    def hook(self, any, api_url, aws_access_key_id, aws_secret_access_key, region_name, data, full_comfyui_info, timeout, verify_ssl):
         # Validate URL before proceeding
         url_error = self.validate_url(api_url)
         if url_error:
@@ -76,18 +81,38 @@ class SecureApiCall:
         if full_comfyui_info:
             payload.update({"comfyui_info": {"full_comfyui_info": current_queue}})
 
-
-        # Resolve any environment variables in the api_url, api_auth fields -- Only allow COMFYUI_SECUREAPICALL_ prefixed variables
+        # Resolve environment variables
         api_url = self.resolve_env_var(api_url, "api_url")
-        api_auth = self.resolve_env_var(api_auth, "api_auth")
+        aws_access_key_id = self.resolve_env_var(aws_access_key_id, "aws_access_key_id")
+        aws_secret_access_key = self.resolve_env_var(aws_secret_access_key, "aws_secret_access_key")
 
-        # Send the payload to the API
-        res = requests.post(
-            api_url, 
-            json=payload, 
-            timeout=timeout, 
-            headers={"Content-Type": "application/json", "x-api-key": api_auth}, 
-            verify=verify_ssl
+        # Configure AWS credentials
+        session = Session(
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            region_name=region_name
         )
+
+        credentials = session.get_credentials()
+
+        api_url = api_url
+        # Prepare the request
+        request = AWSRequest(
+            method='POST',
+            url=api_url,
+            data=json.dumps(payload),
+            headers={'Content-Type': 'application/json'}
+        )
+
+        # Sign the request with SigV4
+        SigV4Auth(credentials, 'execute-api', session.region_name).add_auth(request)
+
+        # Send the signed request
+        res = requests.post(
+            api_url,
+            data=request.data,
+            headers=dict(request.headers)
+        )
+
         res.raise_for_status()
         return (0, )
