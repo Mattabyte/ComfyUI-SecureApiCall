@@ -1,4 +1,5 @@
 from .nodes.secure_api_call import SecureApiCall
+from .nodes.secure_api_call_aws import SecureApiCallAws
 
 NODE_CLASS_MAPPINGS = {
     "SecureAPI-SecureAPI": SecureApiCall,
