@@ -1,5 +1,6 @@
 import os
 import boto3
+from .logger import logger
 from botocore.exceptions import NoCredentialsError
 
 from dotenv import load_dotenv
