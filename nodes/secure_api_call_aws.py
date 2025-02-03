@@ -43,7 +43,7 @@ class SecureApiCallAws:
     FUNCTION = 'hook'
     OUTPUT_NODE = True
     RETURN_TYPES = tuple()
-    CATEGORY = "notifications"
+    CATEGORY = "SecureApiCall"
 
     def resolve_env_var(self, value: str, var_name: str) -> str:
         #Resolve environment variables with validation
