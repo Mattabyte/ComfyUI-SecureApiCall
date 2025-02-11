@@ -55,6 +55,5 @@ class SaveVideoFilesS3:
                 file_path = S3_INSTANCE.upload_file(path, s3_path)
             
             s3_video_paths.append(file_path)
-            counter += 1  # Increment counter for each file.
         
         return (s3_video_paths,)
