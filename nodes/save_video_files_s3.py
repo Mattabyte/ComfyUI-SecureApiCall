@@ -33,24 +33,28 @@ class SaveVideoFilesS3:
         
         for path in local_files:
             ext = path.split(".")[-1]
-            file = f"{filename}_{counter:05}_.{ext}"
-            if convert_any_png_to_jpg:
-                if ext == "png":
-                    # Get the directory of the file
-                    dir_path = os.path.dirname(path)
-                    # convert the png file to a jpg file and remove the png file
-                    file = f"{filename}_{counter:05}_.jpg"
-                    img = Image.open(path)
-                    img.save(file, "JPEG")
-                    os.remove(path)
-                    #just need to update the path to the new file name (new extension)
-                    path = os.path.join(dir_path, file)
-                    
-            # Upload the local files to S3
-            s3_path = os.path.join(full_output_folder, file)
-            file_path = S3_INSTANCE.upload_file(path, s3_path)
-              
-            # Add the s3 path to the s3_image_paths list
+            # If conversion is enabled and this is a png file, convert it to jpg.
+            if convert_any_png_to_jpg and ext.lower() == "png":
+                from PIL import Image
+                import tempfile
+                # Open and convert the image.
+                with Image.open(path) as img:
+                    rgb_img = img.convert("RGB")
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+                        tmp_file_path = tmp.name
+                        rgb_img.save(tmp_file_path, format="JPEG")
+                # Update extension and file name to reflect the conversion.
+                ext = "jpg"
+                file_name = f"{filename}_{counter:05}_.{ext}"
+                s3_path = os.path.join(full_output_folder, file_name)
+                file_path = S3_INSTANCE.upload_file(tmp_file_path, s3_path)
+                os.unlink(tmp_file_path)  # Remove the temporary file.
+            else:
+                file_name = f"{filename}_{counter:05}_.{ext}"
+                s3_path = os.path.join(full_output_folder, file_name)
+                file_path = S3_INSTANCE.upload_file(path, s3_path)
+            
             s3_video_paths.append(file_path)
+            counter += 1  # Increment counter for each file.
         
         return (s3_video_paths,)
