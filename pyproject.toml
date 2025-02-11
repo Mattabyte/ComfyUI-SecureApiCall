@@ -1,0 +1,14 @@
+[project]
+name = "secureapicall"
+description = "This package provides custom nodes to ComfyUI to POST data to a secure API."
+version = "1.0.0"
+license = {file = "LICENSE"}
+
+[project.urls]
+Repository = "https://github.com/Mattabyte/ComfyUI-SecureApiCall"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "mattabyte"
+DisplayName = "ComfyUI-SecureApiCall"
+Icon = ""
