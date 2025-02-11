@@ -36,12 +36,16 @@ class SaveVideoFilesS3:
             file = f"{filename}_{counter:05}_.{ext}"
             if convert_any_png_to_jpg:
                 if ext == "png":
+                    # Get the directory of the file
+                    dir_path = os.path.dirname(path)
                     # convert the png file to a jpg file and remove the png file
                     file = f"{filename}_{counter:05}_.jpg"
                     img = Image.open(path)
                     img.save(file, "JPEG")
                     os.remove(path)
-            
+                    #just need to update the path to the new file name (new extension)
+                    path = os.path.join(dir_path, file)
+                    
             # Upload the local files to S3
             s3_path = os.path.join(full_output_folder, file)
             file_path = S3_INSTANCE.upload_file(path, s3_path)
