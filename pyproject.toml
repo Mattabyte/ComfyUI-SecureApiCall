@@ -1,7 +1,7 @@
 [project]
 name = "secureapicall"
 description = "This package provides custom nodes to ComfyUI to POST data to a secure API."
-version = "1.1.0"
+version = "1.1.1"
 license = {file = "LICENSE"}
 
 [project.urls]
