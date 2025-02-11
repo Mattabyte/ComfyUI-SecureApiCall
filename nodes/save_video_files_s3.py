@@ -1,4 +1,5 @@
 import os
+from PIL import Image
 
 from ..client_s3 import get_s3_instance
 S3_INSTANCE = get_s3_instance()
@@ -13,6 +14,7 @@ class SaveVideoFilesS3:
     def INPUT_TYPES(s):
         return {"required": {
             "filename_prefix": ("STRING", {"default": "VideoFiles"}),
+            "convert_any_png_to_jpg": ("BOOLEAN", {"default": False}),
             "filenames": ("VHS_FILENAMES", )
             }}
 
@@ -23,7 +25,7 @@ class SaveVideoFilesS3:
     OUTPUT_IS_LIST = (True,)
     CATEGORY = "SaveVideoFilesS3"
 
-    def save_video_files(self, filenames, filename_prefix="VideoFiles"):
+    def save_video_files(self, filenames, filename_prefix="VideoFiles", convert_any_png_to_jpg=False):
         filename_prefix += self.prefix_append
         local_files = filenames[1]
         full_output_folder, filename, counter, _, filename_prefix = S3_INSTANCE.get_save_path(filename_prefix)
@@ -32,10 +34,16 @@ class SaveVideoFilesS3:
         for path in local_files:
             ext = path.split(".")[-1]
             file = f"{filename}_{counter:05}_.{ext}"
+            if convert_any_png_to_jpg:
+                if ext == "png":
+                    # convert the png file to a jpg file and remove the png file
+                    file = f"{filename}_{counter:05}_.jpg"
+                    img = Image.open(path)
+                    img.save(file, "JPEG")
+                    os.remove(path)
             
-            # Upload the local file to S3
+            # Upload the local files to S3
             s3_path = os.path.join(full_output_folder, file)
-            
             file_path = S3_INSTANCE.upload_file(path, s3_path)
               
             # Add the s3 path to the s3_image_paths list
