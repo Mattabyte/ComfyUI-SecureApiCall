@@ -2,6 +2,7 @@ from .nodes.secure_api_call import SecureApiCall
 from .nodes.secure_api_call_aws import SecureApiCallAws
 from .nodes.save_video_files_s3 import SaveVideoFilesS3
 from .nodes.save_latent_s3 import SaveLatentToS3
+
 NODE_CLASS_MAPPINGS = {
     "SecureAPI-SecureAPI": SecureApiCall,
     "SecureAPI-SecureAPI-AWS": SecureApiCallAws,

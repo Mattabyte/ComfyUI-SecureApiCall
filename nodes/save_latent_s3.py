@@ -6,6 +6,8 @@ S3_INSTANCE = get_s3_instance()
 class SaveLatentToS3:
     def __init__(self):
         self.output_dir = folder_paths.get_output_directory()
+        self.s3_output_dir = os.getenv("S3_OUTPUT_DIR")
+        self.prefix_append = ""
 
     @classmethod
     def INPUT_TYPES(s):
