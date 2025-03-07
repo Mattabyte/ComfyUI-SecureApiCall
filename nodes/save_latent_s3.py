@@ -21,7 +21,7 @@ class SaveLatentToS3:
 
     OUTPUT_NODE = True
 
-    CATEGORY = "SaveVideoFilesS3"
+    CATEGORY = "SaveLatentToS3"
 
     def save(self, samples, filename_prefix="ComfyUI", prompt=None, extra_pnginfo=None):
         full_output_folder, filename, counter, subfolder, filename_prefix = folder_paths.get_save_image_path(filename_prefix, self.output_dir)
